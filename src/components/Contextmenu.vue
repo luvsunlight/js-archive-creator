@@ -40,10 +40,10 @@ export default {
     });
   },
   computed: {
-    ...mapState(["rootNodeName", "fileStats"]),
+    ...mapState(["fileSys", "fileStats"]),
     ...mapGetters(["getNewName"]),
     isFolder() {
-      return this.context ? this.context.type === "folder" : true;
+      return this.context ? this.context.data.type === "folder" : true;
     },
     deleteMsg() {
       return `Are you sure to delete ${
@@ -84,7 +84,7 @@ export default {
       input.disabled = false;
     },
     handleDelete() {
-      if (this.context.name === this.rootNodeName) {
+      if (this.context.name === this.fileSys.name) {
         this.$message.error("Cannot delete ROOT folder");
       } else {
         this.deleteNode(this.context.name);
@@ -104,17 +104,17 @@ export default {
 
 .contextmenu {
   display: none;
-  position: absolute;
+  position: fixed;
   width: 100px;
   color: @contextmenu-color;
   background: @contextmenu-bg;
   text-align: center;
-  z-index: 100000;
+  z-index: @z-index-contextmenu;
 
   &-item {
+    .font-bold;
     .cursor-pointer;
     padding: @offset-tiny;
-    font-weight: bold;
 
     &:hover {
       background: @contextmenu-hover;

@@ -1,24 +1,27 @@
 <template>
-  <div :class="navClasses">
-    <a-icon type="menu-fold" :class="iconClasses" :style="iconStyle" @click.native="handleToggle"></a-icon>
+  <div class="nav">
+    <a-icon type="menu-fold" :class="toggleClasses" :style="iconStyle" @click.native="handleToggle"></a-icon>
     {{$route.params.filename}}
+    <a-icon
+      type="setting"
+      class="nav-icon nav-menu"
+      :style="iconStyle"
+      @click.native="toggleSettingFold(false)"
+    ></a-icon>
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations } from "vuex";
 
-const prefixCls = "nav";
 export default {
   computed: {
     ...mapState(["menuFold"]),
-    navClasses() {
-      return prefixCls;
-    },
-    iconClasses() {
+    toggleClasses() {
       return [
-        `${prefixCls}-icon`,
-        `${prefixCls}-icon-${this.menuFold ? "fold" : "unfold"}`
+        "nav-icon",
+        "nav-toggle",
+        `nav-toggle-${this.menuFold ? "unfold" : "fold"}`
       ];
     },
     iconStyle() {
@@ -28,7 +31,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["toggleMenuFold"]),
+    ...mapMutations(["toggleMenuFold", "toggleSettingFold"]),
     handleToggle() {
       this.toggleMenuFold();
     }
@@ -40,22 +43,32 @@ export default {
 @import "../common/style/index.less";
 
 .nav {
-  .relative;
+  position: sticky;
+  top: 0px;
   height: @nav-height;
   line-height: @nav-height;
-  border-bottom: 5px solid @color-blue-1;
-  background: @color-light;
+  color: @nav-color;
+  background: @nav-bg;
+  // border-bottom: 5px solid @nav-border-color;
+  // background: @nav-color;
 
   &-icon {
     .anim-normal;
     .cursor-pointer;
     position: absolute;
-    left: 10px;
     top: (@nav-height / 2) - 10px;
+  }
+
+  &-toggle {
+    left: 10px;
 
     &-fold {
       transform: rotate(180deg);
     }
+  }
+
+  &-menu {
+    right: 10px;
   }
 }
 </style>

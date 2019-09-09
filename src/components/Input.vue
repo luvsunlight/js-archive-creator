@@ -2,7 +2,6 @@
   <input
     type="text"
     class="input"
-    :style="style"
     :value="value"
     :disabled="disabled"
     @change="handleChange"
@@ -22,21 +21,12 @@ export default {
     editable: {
       type: Boolean,
       default: true
-    },
-    width: {
-      type: String | Number,
-      default: "auto"
     }
   },
   data() {
     return {
       disabled: !this.editable
     };
-  },
-  computed: {
-    style() {
-      return { width: this.width };
-    }
   },
   methods: {
     handleChange(e) {
@@ -53,12 +43,13 @@ export default {
 
 <style lang='less' scoped>
 .input {
+  width: 100px;
   border: none;
   outline: none;
   background: inherit;
 
   &:focus {
-    background: #fff;
+    // background: #fff;
   }
 }
 </style>

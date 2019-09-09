@@ -1,14 +1,16 @@
 import Vue from "vue"
 import Vuex from "vuex"
 import { findNodeByName, deleteNodeByName } from "./util"
+import UUID from "uuid-js"
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
 	state: {
+		isDark: false,
 		updateMenu: true,
 		menuFold: false,
-		rootNodeName: "Archive",
+		settingFold: true,
 		fileSys: {
 			name: "Archive",
 			type: "folder",
@@ -30,18 +32,26 @@ export default new Vuex.Store({
 				type == "folder" ? state.newFolderIndex++ : state.newFileIndex++
 			}`
 		},
+		getNewKey: state => (type = "file") => {
+			return `${type}-${UUID.create().toString()}`
+		},
 		getFileStatsByName: state => name => {
 			return state.fileStats.find(file => file.name === name)
 		}
 	},
 	mutations: {
+		setThemeDark(state, isDark) {
+			state.isDark = isDark
+		},
 		setUpdateMenu(state, update) {
 			state.updateMenu = update
 		},
 		toggleMenuFold(state) {
 			state.menuFold = !state.menuFold
 		},
-
+		toggleSettingFold(state, toggle) {
+			state.settingFold = toggle
+		},
 		addNode(state, { parentNodeName, childNodeName, type }) {
 			let node = findNodeByName(state.fileSys, parentNodeName)
 			if (!node) return null
