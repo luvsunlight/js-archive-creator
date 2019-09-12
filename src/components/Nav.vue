@@ -1,7 +1,7 @@
 <template>
   <div class="nav">
-    <a-icon type="menu-fold" :class="toggleClasses" :style="iconStyle" @click.native="handleToggle"></a-icon>
     {{$route.params.filename}}
+    <a-icon type="menu-fold" :class="toggleClasses" :style="iconStyle" @click.native="handleToggle"></a-icon>
     <a-icon
       type="setting"
       class="nav-icon nav-menu"
@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 export default {
   computed: {
@@ -31,7 +31,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["toggleMenuFold", "toggleSettingFold"]),
+    ...mapActions(["toggleMenuFold", "toggleSettingFold"]),
     handleToggle() {
       this.toggleMenuFold();
     }
@@ -49,8 +49,7 @@ export default {
   line-height: @nav-height;
   color: @nav-color;
   background: @nav-bg;
-  // border-bottom: 5px solid @nav-border-color;
-  // background: @nav-color;
+  font-size: @nav-font-size;
 
   &-icon {
     .anim-normal;
@@ -61,9 +60,9 @@ export default {
 
   &-toggle {
     left: 10px;
-
+    transform: rotate(180deg);
     &-fold {
-      transform: rotate(180deg);
+      transform: rotate(0);
     }
   }
 

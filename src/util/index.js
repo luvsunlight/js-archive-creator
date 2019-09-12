@@ -1,10 +1,12 @@
-const findNodeByName = (node, name) => {
-	if (node.name == name) {
+import Vue from "vue"
+
+const findNodeByName = (node, name, type = "file") => {
+	if (node.name === name && node.type === type) {
 		return node
 	} else if (node.children && node.children.length) {
 		for (let i = 0; i < node.children.length; i++) {
 			let child = node.children[i]
-			let result = findNodeByName(child, name)
+			let result = findNodeByName(child, name, type)
 			if (result) {
 				return result
 			}
@@ -30,4 +32,11 @@ const deleteNodeByName = (node, name) => {
 	}
 }
 
-export { findNodeByName, deleteNodeByName }
+const forceUpdate = context => {
+	context.$store.dispatch("setUpdateMenu", false)
+	Vue.nextTick(() => {
+		context.$store.dispatch("setUpdateMenu", true)
+	})
+}
+
+export { findNodeByName, deleteNodeByName, forceUpdate }

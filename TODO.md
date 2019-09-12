@@ -1,1 +1,6 @@
-* [ ] electron-vue
+-   [ ] electron-vue
+-   [ ] Toggle theme(dark / light)
+-   [ ] 重名的逻辑可以再改一下（本地查询或者什么的）（顺便也要改一下 find 和 delete 的逻辑）
+-   [ ] draggable menu
+-   [ ] (bug) largeinput 的内容未传入
+-   [ ] 做成后台

@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters } from "vuex";
+import { mapState, mapActions, mapGetters } from "vuex";
 import Input from "../components/Input";
 import LargeInput from "../components/LargeInput";
 
@@ -48,9 +48,14 @@ export default {
   },
   watch: {
     "$route.params.filename"(name) {
-      Object.assign(this, this.getFileStatsByName(name));
-      console.log("Read " + name);
-      console.log(this.getFileStatsByName(name));
+      let file = this.getFileStatsByName(name);
+      if (file) {
+        Object.assign(this, this.getFileStatsByName(name));
+        console.log("Read " + name);
+        console.log(this.getFileStatsByName(name));
+      } else if (this.$route.name !== "404") {
+        this.$router.push("/404");
+      }
     }
   },
   computed: {
@@ -70,7 +75,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["setFileStatsByName", "toggleSettingFold"]),
+    ...mapActions(["setFileStatsByName", "toggleSettingFold"]),
     handleChange() {
       let name = this.$route.params.filename;
       let { title, desc, code, summary } = this;
@@ -93,18 +98,14 @@ export default {
 @import "../common/style/index.less";
 
 .file {
+  padding: @file-padding;
   &-item {
     .anim-normal;
     height: 100%;
     padding: @offset-small;
-    margin: @offset-base;
-    border-left: 5px solid @nav-border-color;
+    margin: @offset-base 0;
     text-align: left;
     background: @color-light;
-
-    &-fold {
-      margin: @offset-base;
-    }
 
     &-title {
       .font-bold;

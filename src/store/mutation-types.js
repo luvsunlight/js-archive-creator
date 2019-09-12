@@ -1,0 +1,15 @@
+export const SET_DARK_THEME = "SET_DARK_THEME"
+
+export const SET_UPDATE_MENU = "SET_UPDATE_MENU"
+
+export const TOGGLE_MENU = "TOGGLE_MENU"
+
+export const TOGGLE_SETTING = "TOGGLE_SETTING"
+
+export const ADD_NODE = "ADD_NODE"
+
+export const RENAME_NODE = "RENAME_NODE"
+
+export const DELETE_NODE = "DELETE_NODE"
+
+export const SET_FILE_STATE_BY_NAME = "SET_FILE_STATE_BY_NAME"

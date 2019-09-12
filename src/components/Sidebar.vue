@@ -37,13 +37,11 @@ export default {
 
 .side {
   .anim-normal;
-  .absolute(0);
   height: 100%;
   background: @sidebar-bg;
   color: @sidebar-color;
   text-align: left;
   overflow: hidden;
-  box-shadow: @sidebar-shadow;
   z-index: @z-index-sidebar;
 }
 </style>

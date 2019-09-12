@@ -1,8 +1,10 @@
 <template>
-  <pre class="large-ouput" contenteditable :code="code" v-highlight @blur="handleBlur"><code class="lang-javascript">{{value}}</code></pre>
+  <pre ref="pre" class="large-ouput" v-highlight contenteditable :code="code" @blur="handleBlur"><code class="lang-javascript">{{value}}</code></pre>
 </template>
 
 <script>
+// import hljs from "highlight.js";
+
 export default {
   model: { prop: "value", event: "change" },
   props: {
@@ -15,17 +17,18 @@ export default {
       default: true
     }
   },
-  data() {
-    return {
-      runBtnMsg: "Run",
-      result: "result"
-    };
+  computed: {
+    rendererText() {
+      let blocks = this.$refs.pre.querySelector("code");
+      if (blocks.length === 0) {
+        return this.value;
+      } else {
+        return "";
+      }
+    }
   },
   methods: {
-    handleRun() {
-      this.result = eval(this.$el.innerText);
-    },
-    handleBlur(e) {
+    handleBlur() {
       this.$emit("change", this.$el.innerText);
     }
   }

@@ -9,25 +9,34 @@
       <IconFont :type="iconType"></IconFont>
       <Input
         ref="input"
-        :value="data.name"
+        outline
+        :value="name"
         :editable="false"
-        @blur="handleBlur"
-        @change="handleRename"
+        @blur="handleItemBlur"
+        @change="handleItemRename"
       />
     </div>
-    <ul class="item-children" v-show="open && openable()">
+    <ul class="item-children" v-show="open && (openable() || newItem)">
       <SideItem
         v-for="item in data.children"
         :key="getNewKey(item.type)"
         :data="item"
         :Event="Event"
       ></SideItem>
+      <Input
+        v-if="newItem"
+        ref="newItem"
+        outline
+        @change="handleNewItemAdd"
+        @blur="handleNewItemBlur"
+      />
     </ul>
   </li>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from "vuex";
+import Vue from "vue";
+import { mapGetters, mapActions } from "vuex";
 import Input from "./Input";
 
 export default {
@@ -45,6 +54,8 @@ export default {
   },
   data() {
     return {
+      init: true,
+      newItem: false,
       active: false,
       hover: false,
       open: true,
@@ -54,7 +65,14 @@ export default {
   },
   mounted() {
     this.name = this.data.name;
-    this.oldName = this.data.name;
+    if (!this.isNameInit(this.name)) this.init = false;
+    // if (this.init) {
+    //   let input = this.$refs.input;
+    //   input.disabled = false;
+    //   Vue.nextTick(() => {
+    //     input.$el.focus();
+    //   });
+    // }
 
     this.Event.$on("blur", e => {
       this.hover = false;
@@ -64,7 +82,7 @@ export default {
     });
   },
   computed: {
-    ...mapGetters(["getNewKey", "getFileStatsByName"]),
+    ...mapGetters(["findNode", "getNewKey", "getFileStatsByName"]),
     isFile() {
       return this.data.type === "file";
     },
@@ -82,7 +100,18 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["renameNode"]),
+    ...mapActions(["addNode", "renameNode", "setFileStatsByName"]),
+    isNameExisted(name, type) {
+      return this.findNode(name, type) ? true : false;
+    },
+    isNameInit(name) {
+      return name === "new_file" || name === "new_folder";
+    },
+    isNameValid(name, type) {
+      return name && !this.isNameExisted(name, type) && !this.isNameInit(name)
+        ? true
+        : false;
+    },
     openable() {
       return this.isFolder && this.data.children && this.data.children.length
         ? true
@@ -103,16 +132,48 @@ export default {
       this.hover = true;
       this.Event.$emit("contextmenu", { e, context: this });
     },
-    handleBlur(e) {
-      this.oldName = this.data.name;
+    handleNewItemBlur(e) {
+      if (!e) this.newItem = false;
     },
-    handleRename(v) {
+    handleNewItemAdd(e) {
+      let type = this.$refs.newItem.itemType;
+      if (!this.isNameValid(e, type)) {
+        this.$message.error(`name is invalid!`);
+        this.$refs.newItem.$el.focus();
+      } else {
+        this.newItem = false;
+        if (type === "file") {
+          this.setFileStatsByName({ name: e });
+        }
+        this.addNode({
+          parentNodeName: this.name,
+          childNodeName: e,
+          type
+        });
+      }
+    },
+    handleItemBlur(e) {
+      this.name = this.data.name;
+    },
+    handleItemRename(v) {
+      // 防止重名
+      if (!this.isNameValid(v)) {
+        this.$message.error("name is invalid!");
+        return;
+      }
+      // Reset fileStats
       if (this.isFile) {
-        let item = this.getFileStatsByName(this.oldName);
-        if (item) item.name = this.data.name;
+        let item = this.getFileStatsByName(this.name);
+        if (item) this.setFileStatsByName({ name: this.name, newName: v });
       }
 
-      this.renameNode({ oldName: this.oldName, newName: v });
+      // Sync route
+      if (this.$route.params.filename === this.name) {
+        this.$router.push(`/file/${v}`);
+      }
+
+      // Reset filsSys
+      this.renameNode({ oldName: this.name, newName: v });
     }
   }
 };
@@ -130,7 +191,7 @@ export default {
     .font-bold;
     .cursor-pointer;
 
-    padding: @offset-tiny / 2 @offset-small;
+    padding: @offset-tiny / 4 @offset-small;
 
     &.hover,
     &:hover {

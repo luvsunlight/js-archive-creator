@@ -1,7 +1,7 @@
 <template>
   <div class="contextmenu">
-    <div v-show="isFolder" class="contextmenu-item" @click="handleNewFile">New File</div>
-    <div v-show="isFolder" class="contextmenu-item" @click="handleNewFolder">New Folder</div>
+    <div v-show="isFolder" class="contextmenu-item" @click="handleNewItem('file')">New File</div>
+    <div v-show="isFolder" class="contextmenu-item" @click="handleNewItem('folder')">New Folder</div>
     <div class="contextmenu-item" @click="handleNewName">Rename</div>
     <a-popconfirm :title="deleteMsg" @confirm="handleDelete" okText="Yes" cancelText="No">
       <div class="contextmenu-item">Delete</div>
@@ -11,7 +11,8 @@
 
 <script>
 import Vue from "vue";
-import { mapState, mapMutations, mapGetters } from "vuex";
+import { mapState, mapActions, mapGetters } from "vuex";
+import { forceUpdate } from "../util";
 
 export default {
   props: {
@@ -52,46 +53,36 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
+    ...mapActions([
       "setUpdateMenu",
       "setFileStatsByName",
       "addNode",
       "deleteNode"
     ]),
-    handleNewFolder(e) {
+    handleNewItem(type) {
       if (this.isFolder) {
-        let name = this.getNewName("folder");
-        this.addNode({
-          parentNodeName: this.context.name,
-          childNodeName: name,
-          type: "folder"
+        this.context.newItem = true;
+        Vue.nextTick(() => {
+          this.context.$refs.newItem.itemType = type;
+          this.context.$refs.newItem.$el.focus();
         });
-      }
-    },
-    handleNewFile(e) {
-      if (this.isFolder) {
-        let name = this.getNewName("file");
-        this.addNode({
-          parentNodeName: this.context.name,
-          childNodeName: name,
-          type: "file"
-        });
-        this.setFileStatsByName({ name });
       }
     },
     handleNewName(e) {
       let input = this.context.$refs.input;
-      input.disabled = false;
+      if (input) {
+        input.disabled = false;
+        Vue.nextTick(() => {
+          input.$el.focus();
+        });
+      }
     },
     handleDelete() {
       if (this.context.name === this.fileSys.name) {
         this.$message.error("Cannot delete ROOT folder");
       } else {
         this.deleteNode(this.context.name);
-        this.setUpdateMenu(false); // A HACK to force DOM update
-        Vue.nextTick(() => {
-          this.setUpdateMenu(true);
-        });
+        forceUpdate(this);
         this.$message.success(`Delete <${this.context.name}> successfully`);
       }
     }

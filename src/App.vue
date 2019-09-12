@@ -1,6 +1,6 @@
 <template>
   <div id="app" @contextmenu="handleContextmenu">
-    <Side class="side"></Side>
+    <Side :class="sideClasses"></Side>
     <div :class="mainClasses">
       <Nav></Nav>
       <router-view />
@@ -17,6 +17,9 @@ export default {
   components: { Nav, Side },
   computed: {
     ...mapState(["menuFold"]),
+    sideClasses() {
+      return ["side", `side-${this.menuFold ? "fold" : "unfold"}`];
+    },
     mainClasses() {
       return ["main", `main-${this.menuFold ? "fold" : "unfold"}`];
     }
@@ -55,8 +58,13 @@ body,
   height: 100%;
 
   .side {
+    .absolute(0);
     width: @sidebar-width;
     padding: @offset-small;
+
+    &-fold {
+      left: -@sidebar-width;
+    }
   }
 
   .main {
@@ -64,10 +72,14 @@ body,
     .anim-normal;
     height: 100%;
     margin-left: @sidebar-width;
-    // padding: @offset-base;
+    padding: @main-padding;
     background: @main-bg;
     z-index: @z-index-main;
     overflow: auto;
+
+    &-fold {
+      margin-left: 0;
+    }
 
     &::-webkit-scrollbar {
       width: 10px;
@@ -80,11 +92,6 @@ body,
 
     &::-webkit-scrollbar-track {
       background: @scrollbar-bg;
-    }
-
-    &-fold {
-      margin-left: @sidebar-fold-width;
-      padding: 0;
     }
   }
 }

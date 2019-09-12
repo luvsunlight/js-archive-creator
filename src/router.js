@@ -17,10 +17,11 @@ const router = new Router({
 			name: "File",
 			component: File
 		},
+		{ path: "/404", name: "404", component: NotFoundPage },
 		{
 			path: "*",
-			name: "404",
-			component: NotFoundPage
+			name: "noMatch",
+			redirect: "/404"
 		}
 	]
 })

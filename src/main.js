@@ -1,7 +1,7 @@
 import Vue from "vue"
 import App from "./App.vue"
 import router from "./router"
-import store from "./store"
+import store from "./store/"
 import hljs from "highlight.js"
 import "highlight.js/styles/atom-one-dark.css"
 import javascript from "highlight.js/lib/languages/javascript"

@@ -1,11 +1,7 @@
 import axios from "axios"
 
-export const add = ({ name }) =>
-	axios.get("/file/add", {
-		params: {
-			name
-		}
-	})
+const api_getNewKey = ({ type = "file" }) => {
+	return
+}
 
-export const rename = ({ oldName, name }) =>
-	axios.post("/file/rename", { params: { oldName, name } })
+export const api_addNewFile = {}

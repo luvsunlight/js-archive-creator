@@ -1,0 +1,17 @@
+{
+  "name": "host",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "prozac <516060659@qq.com> (https://github.com/luvsunlight)",
+  "license": "MIT",
+  "dependencies": {
+    "mysql": "^2.17.1",
+    "uuid-js": "^0.7.5"
+  }
+}
