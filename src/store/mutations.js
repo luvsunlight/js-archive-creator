@@ -9,6 +9,7 @@ import {
 	DELETE_NODE,
 	SET_FILE_STATE_BY_NAME
 } from "./mutation-types"
+import { api_setStats } from "../api"
 
 export default {
 	[SET_DARK_THEME](state, isDark) {

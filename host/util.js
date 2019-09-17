@@ -1,5 +1,3 @@
-import Vue from "vue"
-
 const findNodeByName = (node, name, type = "file") => {
 	if (node.name === name && node.type === type) {
 		return node
@@ -32,11 +30,7 @@ const deleteNodeByName = (node, name, type = "file") => {
 	}
 }
 
-const forceUpdate = context => {
-	context.$store.dispatch("setUpdateMenu", false)
-	Vue.nextTick(() => {
-		context.$store.dispatch("setUpdateMenu", true)
-	})
+module.exports = {
+	findNodeByName,
+	deleteNodeByName
 }
-
-export { findNodeByName, deleteNodeByName, forceUpdate }

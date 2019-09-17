@@ -1,15 +1,16 @@
 const http = require("http")
 const mysql = require("mysql")
 const url = require("url")
+const { host, port, user, password, database } = require("./config.json")
 const {
-	host,
-	port,
-	user,
-	password,
-	database,
-	fileSysTable,
-	fileStatsTable
-} = require("./config.json")
+	getNewKey,
+	getStats,
+	setStats,
+	getFile,
+	addFile,
+	renameFile,
+	deleteFile
+} = require("./query")
 
 const connection = mysql.createConnection({
 	host,
@@ -25,7 +26,7 @@ connection.connect()
 
 console.log("Running server...")
 
-http.createServer(function(req, res) {
+http.createServer(async function(req, res) {
 	res.writeHead(200, {
 		"Content-Type": "text/plain",
 		"access-control-allow-origin": "*"
@@ -34,32 +35,45 @@ http.createServer(function(req, res) {
 	const path = parseReq.pathname
 	const apiType = path.split("/")[2]
 	const apiName = path.split("/")[3]
+	const args = parseReq.query
 	console.log(`handle request [${parseReq.path}]`)
 
 	switch (apiType) {
 		case "util":
 			switch (apiName) {
 				case "newKey":
-					break
+					res.end(getNewKey(args))
 			}
 			break
 		case "stats":
 			switch (apiName) {
 				case "get":
+					let data = await getStats(
+						Object.assign({ connection }, args)
+					)
+					res.end(JSON.stringify(data))
 					break
 				case "set":
+					setStats(Object.assign({ connection }, args))
 					break
 			}
 			break
 		case "/data":
 			switch (apiName) {
+				case "get":
+					let data = await getFile(
+						Object.assign({ connection }, args)
+					)
+					res.end(JSON.stringify(data))
+					break
 				case "add":
+					addFile(Object.assign({ connection }, args))
 					break
 				case "rename":
+					renameFile(Object.assign({ connection }, args))
 					break
 				case "delete":
-					break
-				case "get":
+					deleteFile(Object.assign({ connection }, args))
 					break
 			}
 	}

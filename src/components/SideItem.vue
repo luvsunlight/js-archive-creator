@@ -38,6 +38,7 @@
 import Vue from "vue";
 import { mapGetters, mapActions } from "vuex";
 import Input from "./Input";
+import { api_addFile } from "../api";
 
 export default {
   name: "SideItem",
@@ -66,13 +67,6 @@ export default {
   mounted() {
     this.name = this.data.name;
     if (!this.isNameInit(this.name)) this.init = false;
-    // if (this.init) {
-    //   let input = this.$refs.input;
-    //   input.disabled = false;
-    //   Vue.nextTick(() => {
-    //     input.$el.focus();
-    //   });
-    // }
 
     this.Event.$on("blur", e => {
       this.hover = false;
@@ -145,11 +139,16 @@ export default {
         if (type === "file") {
           this.setFileStatsByName({ name: e });
         }
-        this.addNode({
+        api_addFile({
           parentNodeName: this.name,
           childNodeName: e,
           type
         });
+        // this.addNode({
+        //   parentNodeName: this.name,
+        //   childNodeName: e,
+        //   type
+        // });
       }
     },
     handleItemBlur(e) {
